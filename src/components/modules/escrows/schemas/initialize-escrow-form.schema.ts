@@ -77,7 +77,6 @@ export const formSchemaSingleRelease = z.object({
     address: z.string().min(1, {
       message: "Trustline address is required.",
     }),
-    decimals: z.number().default(10000000),
   }),
   milestones: z
     .array(
@@ -85,7 +84,7 @@ export const formSchemaSingleRelease = z.object({
         description: z.string().min(1, {
           message: "Milestone description is required.",
         }),
-      }),
+      })
     )
     .min(1, { message: "At least one milestone is required." }),
 });
@@ -105,7 +104,7 @@ export const formSchemaMultiRelease = z.object({
         amount: z.number().min(1, {
           message: "Milestone amount is required.",
         }),
-      }),
+      })
     )
     .min(1, { message: "At least one milestone is required." }),
 });

@@ -58,7 +58,6 @@ export const useInitializeSingleEscrowForm = () => {
       },
       trustline: {
         address: "",
-        decimals: 10000000,
       },
       milestones: [
         {
@@ -79,7 +78,7 @@ export const useInitializeSingleEscrowForm = () => {
     if (currentMilestones.length > 1) {
       form.setValue(
         "milestones",
-        currentMilestones.filter((_, i) => i !== index),
+        currentMilestones.filter((_, i) => i !== index)
       );
     }
   };
@@ -88,7 +87,7 @@ export const useInitializeSingleEscrowForm = () => {
     form.setValue("title", "Sample TW Escrow");
     form.setValue(
       "description",
-      "This is a sample TW escrow for testing purposes",
+      "This is a sample TW escrow for testing purposes"
     );
     form.setValue("engagementId", "ENG12345");
     form.setValue("amount", 50);
@@ -102,7 +101,7 @@ export const useInitializeSingleEscrowForm = () => {
     form.setValue("receiverMemo", 90909090);
     form.setValue(
       "trustline.address",
-      trustlines.find((t) => t.name === "USDC")?.address || "",
+      trustlines.find((t) => t.name === "USDC")?.address || ""
     );
     form.setValue("milestones", [
       {
@@ -137,12 +136,12 @@ export const useInitializeSingleEscrowForm = () => {
        */
       const { unsignedTransaction } = await deployEscrow(
         finalPayload,
-        "single-release",
+        "single-release"
       );
 
       if (!unsignedTransaction) {
         throw new Error(
-          "Unsigned transaction is missing from deployEscrow response.",
+          "Unsigned transaction is missing from deployEscrow response."
         );
       }
 
@@ -181,21 +180,23 @@ export const useInitializeSingleEscrowForm = () => {
       if (data && data.status === "SUCCESS") {
         const escrow = buildSingleEscrowFromResponse(
           data as InitializeSingleReleaseEscrowResponse,
-          walletAddress || "",
+          walletAddress || ""
         );
         setEscrow(escrow);
         setActiveTab("escrow");
         toast.success("Escrow Created");
       } else if (data && data.status !== "SUCCESS") {
-        throw new Error((data as { message?: string }).message || "Failed to create escrow");
+        throw new Error(
+          (data as { message?: string }).message || "Failed to create escrow"
+        );
       } else {
         throw new Error("Invalid response from server");
       }
     } catch (error: unknown) {
       console.error("Error:", error);
-      
+
       let errorMessage = "An unknown error occurred";
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === "string") {
@@ -229,7 +230,7 @@ export const useInitializeSingleEscrowForm = () => {
   };
 
   const getStepFields = (
-    step: number,
+    step: number
   ): (keyof z.infer<typeof formSchemaSingleRelease>)[] => {
     switch (step) {
       case 0:

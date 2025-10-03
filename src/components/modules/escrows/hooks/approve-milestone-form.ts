@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { formSchema } from "../schemas/change-milestone-flag-form.schema";
+import { formSchema } from "../schemas/approve-milestone-form.schema";
 import { toast } from "sonner";
 import { signTransaction } from "../../auth/helpers/stellar-wallet-kit.helper";
 import { useWalletContext } from "@/providers/wallet.provider";
@@ -43,7 +43,6 @@ export const useApproveMilestoneForm = () => {
     defaultValues: {
       contractId: escrow?.contractId || "CAZ6UQX7DEMO123",
       milestoneIndex: "",
-      newFlag: true,
       approver: escrow?.roles.approver || "GAPPROVER123456789",
     },
   });
@@ -61,12 +60,12 @@ export const useApproveMilestoneForm = () => {
        */
       const { unsignedTransaction } = await approveMilestone(
         payload,
-        activeEscrowType,
+        activeEscrowType
       );
 
       if (!unsignedTransaction) {
         throw new Error(
-          "Unsigned transaction is missing from changeMilestoneApprovedFlag response.",
+          "Unsigned transaction is missing from changeMilestoneApprovedFlag response."
         );
       }
 
@@ -107,22 +106,22 @@ export const useApproveMilestoneForm = () => {
           milestones: escrow.milestones.map((milestone, index) =>
             index === Number(payload.milestoneIndex)
               ? activeEscrowType === "single-release"
-                ? { ...milestone, approved: payload.newFlag }
+                ? { ...milestone, approved: true }
                 : {
                     ...(milestone as MultiReleaseMilestone),
                     flags: {
                       ...(milestone as MultiReleaseMilestone).flags,
-                      approved: payload.newFlag,
+                      approved: true,
                     },
                   }
-              : milestone,
+              : milestone
           ),
         } as SingleReleaseEscrow | MultiReleaseEscrow;
 
         setEscrow(escrowUpdated);
 
         toast.success(
-          `Milestone index - ${payload.milestoneIndex} has been approved`,
+          `Milestone index - ${payload.milestoneIndex} has been approved`
         );
         setResponse(data);
         form.reset();
@@ -132,7 +131,7 @@ export const useApproveMilestoneForm = () => {
       console.error("Error:", mappedError.message);
 
       toast.error(
-        mappedError ? mappedError.message : "An unknown error occurred",
+        mappedError ? mappedError.message : "An unknown error occurred"
       );
     } finally {
       setLoading(false);

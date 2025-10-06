@@ -46,7 +46,7 @@ export function GetEscrowsByRoleForm() {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="approver">Approver</SelectItem>
-                      <SelectItem value="platform">Platform</SelectItem>
+                      <SelectItem value="platformAddress">Platform</SelectItem>
                       <SelectItem value="receiver">Receiver</SelectItem>
                       <SelectItem value="releaseSigner">
                         Release Signer

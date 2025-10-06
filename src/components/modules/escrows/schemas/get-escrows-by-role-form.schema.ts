@@ -3,7 +3,7 @@ import { z } from "zod";
 export const getEscrowsByRoleSchema = z.object({
   role: z.enum([
     "approver",
-    "platform",
+    "platformAddress",
     "receiver",
     "releaseSigner",
     "disputeResolver",

@@ -56,7 +56,6 @@ export const useUpdateSingleEscrowForm = () => {
         },
         trustline: {
           address: escrow?.trustline.address || "",
-          decimals: escrow?.trustline.decimals || 10000000,
         },
         milestones: escrow?.milestones || [
           {
@@ -86,12 +85,12 @@ export const useUpdateSingleEscrowForm = () => {
        */
       const { unsignedTransaction } = await updateEscrow(
         payload,
-        "single-release",
+        "single-release"
       );
 
       if (!unsignedTransaction) {
         throw new Error(
-          "Unsigned transaction is missing from updateEscrow response.",
+          "Unsigned transaction is missing from updateEscrow response."
         );
       }
 
@@ -143,7 +142,7 @@ export const useUpdateSingleEscrowForm = () => {
       console.error("Error:", mappedError.message);
 
       toast.error(
-        mappedError ? mappedError.message : "An unknown error occurred",
+        mappedError ? mappedError.message : "An unknown error occurred"
       );
     } finally {
       setLoading(false);

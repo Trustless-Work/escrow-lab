@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { formSchema } from "../schemas/approve-milestone-form.schema";
 import { toast } from "sonner";
 import { signTransaction } from "../../auth/helpers/stellar-wallet-kit.helper";
 import { useWalletContext } from "@/providers/wallet.provider";
@@ -22,6 +21,7 @@ import {
   MultiReleaseMilestone,
 } from "@trustless-work/escrow/types";
 import { useTabsContext } from "@/providers/tabs.provider";
+import { formSchema } from "../schemas/approve-milestone-form.schema";
 
 export const useApproveMilestoneForm = () => {
   const { escrow, setEscrow } = useEscrowContext();

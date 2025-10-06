@@ -58,7 +58,7 @@ export const useGetEscrowsByContractIdsForm = () => {
       console.error("Error fetching escrow:", mappedError.message);
       setError(mappedError.message);
       toast.error(
-        mappedError ? mappedError.message : "Failed to fetch escrow data",
+        mappedError ? mappedError.message : "Failed to fetch escrow data"
       );
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import { EscrowProvider } from "./escrow.provider";
 import { WalletProvider } from "./wallet.provider";
 import { TabsProvider } from "./tabs.provider";
 import { TrustlessWorkProvider } from "./trustless-work.provider";
+import { DialogsProvider } from "./dialogs.provider";
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -17,7 +18,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
       <WalletProvider>
         <TrustlessWorkProvider>
           <TabsProvider>
-            <EscrowProvider>{children}</EscrowProvider>
+            <DialogsProvider>
+              <EscrowProvider>{children}</EscrowProvider>
+            </DialogsProvider>
           </TabsProvider>
         </TrustlessWorkProvider>
       </WalletProvider>

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   SingleReleaseEscrow,
   MultiReleaseEscrow,
@@ -7,6 +9,7 @@ import {
   UpdateMultiReleaseEscrowResponse,
   MultiReleaseMilestone,
   SingleReleaseMilestone,
+  GetEscrowsFromIndexerResponse,
 } from "@trustless-work/escrow/types";
 
 /**
@@ -17,7 +20,7 @@ export const buildSingleEscrowFromResponse = (
   result:
     | InitializeSingleReleaseEscrowResponse
     | UpdateSingleReleaseEscrowResponse,
-  walletAddress: string,
+  walletAddress: string
 ): SingleReleaseEscrow => ({
   contractId: result.contractId,
   signer: walletAddress || "",
@@ -43,7 +46,6 @@ export const buildSingleEscrowFromResponse = (
   },
   trustline: {
     address: result.escrow.trustline.address,
-    decimals: result.escrow.trustline.decimals,
   },
   milestones: result.escrow.milestones.map((m: SingleReleaseMilestone) => ({
     description: m.description,
@@ -61,7 +63,7 @@ export const buildMultiEscrowFromResponse = (
   result:
     | InitializeMultiReleaseEscrowResponse
     | UpdateMultiReleaseEscrowResponse,
-  walletAddress: string,
+  walletAddress: string
 ): MultiReleaseEscrow => ({
   contractId: result.contractId,
   signer: walletAddress || "",
@@ -81,7 +83,6 @@ export const buildMultiEscrowFromResponse = (
   },
   trustline: {
     address: result.escrow.trustline.address,
-    decimals: result.escrow.trustline.decimals,
   },
   milestones: result.escrow.milestones.map((m: MultiReleaseMilestone) => ({
     description: m.description,
@@ -95,3 +96,58 @@ export const buildMultiEscrowFromResponse = (
     },
   })),
 });
+
+/**
+ * Normalize an Indexer escrow response to the InitializeEscrowResponse shape
+ * expected by the builder helpers above.
+ */
+export const normalizeIndexerToInitializeResponse = (
+  indexer: GetEscrowsFromIndexerResponse
+):
+  | InitializeSingleReleaseEscrowResponse
+  | InitializeMultiReleaseEscrowResponse => {
+  const commonEscrowFields = {
+    engagementId: indexer.engagementId,
+    title: indexer.title,
+    description: indexer.description,
+    platformFee: indexer.platformFee ?? 0,
+    receiverMemo: indexer.receiverMemo ?? 0,
+    roles: {
+      approver: indexer.roles.approver,
+      serviceProvider: indexer.roles.serviceProvider,
+      platformAddress: indexer.roles.platformAddress,
+      releaseSigner: indexer.roles.releaseSigner,
+      disputeResolver: indexer.roles.disputeResolver,
+      receiver: indexer.roles.receiver,
+    },
+    trustline: {
+      address: indexer.trustline.address,
+      // Default decimals if not provided by indexer
+      decimals: 10000000,
+    },
+  };
+
+  if (indexer.type === "single-release") {
+    return {
+      contractId: indexer.contractId,
+      escrow: {
+        ...commonEscrowFields,
+        amount: (indexer as any).amount ?? 0,
+        milestones: (indexer.milestones || []).map((m: any) => ({
+          description: m.description,
+        })),
+      },
+    } as unknown as InitializeSingleReleaseEscrowResponse;
+  }
+
+  return {
+    contractId: indexer.contractId,
+    escrow: {
+      ...commonEscrowFields,
+      milestones: (indexer.milestones || []).map((m: any) => ({
+        description: m.description,
+        amount: m.amount ?? 0,
+      })),
+    },
+  } as unknown as InitializeMultiReleaseEscrowResponse;
+};

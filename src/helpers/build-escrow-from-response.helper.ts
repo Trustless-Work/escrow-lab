@@ -24,7 +24,7 @@ export const buildSingleEscrowFromResponse = (
 ): SingleReleaseEscrow => ({
   contractId: result.contractId,
   signer: walletAddress || "",
-  balance: 0,
+  balance: result.escrow.balance || 0,
   engagementId: result.escrow.engagementId,
   title: result.escrow.title,
   description: result.escrow.description,
@@ -40,18 +40,18 @@ export const buildSingleEscrowFromResponse = (
     receiver: result.escrow.roles.receiver,
   },
   flags: {
-    disputed: false,
-    released: false,
-    resolved: false,
+    disputed: result.escrow.flags?.disputed || false,
+    released: result.escrow.flags?.released || false,
+    resolved: result.escrow.flags?.resolved || false,
   },
   trustline: {
     address: result.escrow.trustline.address,
   },
   milestones: result.escrow.milestones.map((m: SingleReleaseMilestone) => ({
     description: m.description,
-    evidence: "",
-    approved: false,
-    status: "pending",
+    evidence: m.evidence || "",
+    approved: m?.approved || false,
+    status: m.status || "",
   })),
 });
 
@@ -67,7 +67,7 @@ export const buildMultiEscrowFromResponse = (
 ): MultiReleaseEscrow => ({
   contractId: result.contractId,
   signer: walletAddress || "",
-  balance: 0,
+  balance: result.escrow.balance || 0,
   engagementId: result.escrow.engagementId,
   title: result.escrow.title,
   description: result.escrow.description,
@@ -86,13 +86,14 @@ export const buildMultiEscrowFromResponse = (
   },
   milestones: result.escrow.milestones.map((m: MultiReleaseMilestone) => ({
     description: m.description,
-    evidence: "",
+    evidence: m.evidence || "",
+    status: m.status || "",
     amount: m.amount,
     flags: {
-      approved: false,
-      disputed: false,
-      released: false,
-      resolved: false,
+      approved: m?.flags?.approved || false,
+      disputed: m?.flags?.disputed || false,
+      released: m?.flags?.released || false,
+      resolved: m?.flags?.resolved || false,
     },
   })),
 });
@@ -122,8 +123,6 @@ export const normalizeIndexerToInitializeResponse = (
     },
     trustline: {
       address: indexer.trustline.address,
-      // Default decimals if not provided by indexer
-      decimals: 10000000,
     },
   };
 
@@ -135,6 +134,9 @@ export const normalizeIndexerToInitializeResponse = (
         amount: (indexer as any).amount ?? 0,
         milestones: (indexer.milestones || []).map((m: any) => ({
           description: m.description,
+          approved: m.approved || false,
+          evidence: m.evidence || "",
+          status: m.status || "No loaded",
         })),
       },
     } as unknown as InitializeSingleReleaseEscrowResponse;
@@ -146,6 +148,9 @@ export const normalizeIndexerToInitializeResponse = (
       ...commonEscrowFields,
       milestones: (indexer.milestones || []).map((m: any) => ({
         description: m.description,
+        evidence: m.evidence || "",
+        status: m.status || "No loaded",
+        flags: m.flags || {},
         amount: m.amount ?? 0,
       })),
     },

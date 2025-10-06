@@ -12,13 +12,13 @@ import { WalletError } from "@/@types/errors.entity";
 import {
   SingleReleaseEscrow,
   EscrowRequestResponse,
-  SingleReleaseResolveDisputePayload,
 } from "@trustless-work/escrow/types";
 import {
   useResolveDispute,
   useSendTransaction,
 } from "@trustless-work/escrow/hooks";
-import { formSchemaSingleRelease } from "../../schemas/resolve-dispute-form.schema";
+import { getFormSchema } from "../../schemas/resolve-dispute-form.schema";
+import { SingleReleaseResolveDisputePayload } from "@trustless-work/escrow/types";
 
 export const useResolveDisputeEscrowForm = () => {
   const { escrow } = useEscrowContext() as {
@@ -31,21 +31,58 @@ export const useResolveDisputeEscrowForm = () => {
   const { resolveDispute } = useResolveDispute();
   const { sendTransaction } = useSendTransaction();
 
-  const form = useForm<z.infer<typeof formSchemaSingleRelease>>({
-    resolver: zodResolver(formSchemaSingleRelease),
+  // Compose schema: required fields + distributions schema
+  const singleSchema = z
+    .object({
+      contractId: z.string().min(1, { message: "Contract ID is required." }),
+      disputeResolver: z.string().min(1, {
+        message: "Dispute Resolver is required.",
+      }),
+    })
+    .and(getFormSchema());
+  type SingleFormValues = z.infer<typeof singleSchema>;
+
+  const form = useForm<SingleFormValues>({
+    resolver: zodResolver(singleSchema),
     defaultValues: {
       contractId: escrow?.contractId || "",
       disputeResolver: escrow?.roles.disputeResolver || "",
-      approverFunds: 0,
-      receiverFunds: 0,
+      distributions: [
+        {
+          address: escrow?.roles.approver || "",
+          amount: "",
+        },
+        {
+          address: escrow?.roles.receiver || "",
+          amount: "",
+        },
+      ],
     },
   });
 
-  const onSubmit = async (payload: SingleReleaseResolveDisputePayload) => {
+  const onSubmit = async (payload: SingleFormValues) => {
     setLoading(true);
     setResponse(null);
 
     try {
+      const normalizedDistributions = payload.distributions.map(
+        (d: { address: string; amount: string | number }) => ({
+          address: d.address,
+          amount:
+            typeof d.amount === "string"
+              ? d.amount === "" || d.amount === "."
+                ? 0
+                : parseFloat(d.amount)
+              : d.amount,
+        })
+      ) as SingleReleaseResolveDisputePayload["distributions"]; // ensure exact type
+
+      const finalPayload: SingleReleaseResolveDisputePayload = {
+        contractId: payload.contractId,
+        disputeResolver: payload.disputeResolver,
+        distributions: normalizedDistributions,
+      };
+
       /**
        * API call by using the trustless work hooks
        * @Note:
@@ -53,13 +90,13 @@ export const useResolveDisputeEscrowForm = () => {
        * - The result will be an unsigned transaction
        */
       const { unsignedTransaction } = await resolveDispute(
-        payload,
-        "single-release",
+        finalPayload,
+        "single-release"
       );
 
       if (!unsignedTransaction) {
         throw new Error(
-          "Unsigned transaction is missing from resolveDispute response.",
+          "Unsigned transaction is missing from resolveDispute response."
         );
       }
 
@@ -95,14 +132,18 @@ export const useResolveDisputeEscrowForm = () => {
        * - Show an error toast
        */
       if (data.status === "SUCCESS" && escrow) {
+        const totalReleased = normalizedDistributions.reduce(
+          (acc: number, d: { address: string; amount: number }) =>
+            acc + d.amount,
+          0
+        );
         const escrowUpdated: SingleReleaseEscrow = {
           ...escrow,
           flags: {
             ...escrow.flags,
             resolved: true,
           },
-          balance:
-            escrow.balance - payload.approverFunds - payload.receiverFunds,
+          balance: escrow.balance - totalReleased,
         };
 
         setEscrow(escrowUpdated);
@@ -115,7 +156,7 @@ export const useResolveDisputeEscrowForm = () => {
       console.error("Error:", mappedError.message);
 
       toast.error(
-        mappedError ? mappedError.message : "An unknown error occurred",
+        mappedError ? mappedError.message : "An unknown error occurred"
       );
     } finally {
       setLoading(false);

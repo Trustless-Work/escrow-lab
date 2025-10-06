@@ -19,8 +19,6 @@ export const EscrowCreatedSection = () => {
   const { escrow } = useEscrowContext();
   const { activeEscrowType } = useTabsContext();
 
-  console.log(escrow);
-
   const totalMilestones = escrow?.milestones.length || 0;
   const completedMilestones =
     escrow?.milestones.filter(

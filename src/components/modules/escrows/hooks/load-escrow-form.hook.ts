@@ -36,7 +36,6 @@ export const useLoadEscrowForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       contractIds: [{ value: "" }],
-      signer: walletAddress || "Connect your wallet to get your address",
       validateOnChain: true,
     },
   });
@@ -48,7 +47,6 @@ export const useLoadEscrowForm = () => {
     try {
       const data = (await getEscrowByContractIds({
         contractIds: payload.contractIds.map((item) => item.value),
-        signer: walletAddress || "",
         validateOnChain: true,
       })) as unknown as GetEscrowsFromIndexerResponse[];
 

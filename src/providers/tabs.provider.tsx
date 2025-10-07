@@ -11,6 +11,7 @@ export type EscrowTabs =
   | "change-dispute-flag"
   | "start-dispute"
   | "resolve-dispute"
+  | "withdraw"
   | "release-funds"
   | "update-escrow";
 type EscrowType = "multi-release" | "single-release";

@@ -22,6 +22,7 @@ import {
 import { DisputeMilestoneForm } from "../modules/escrows/ui/forms/multi-release/DisputeMilestoneForm";
 import { ReleaseFundsMilestoneForm } from "../modules/escrows/ui/forms/multi-release/ReleaseFundsMilestoneForm";
 import { UpdateMultiEscrowForm } from "../modules/escrows/ui/forms/multi-release/UpdateMultiEscrowForm";
+import { WithdrawFundsForm } from "../modules/escrows/ui/forms/multi-release/WithdrawFundsForm";
 
 export const EscrowTabs = () => {
   const { activeEscrowTab, activeEscrowType, setActiveEscrowTab } =
@@ -42,28 +43,25 @@ export const EscrowTabs = () => {
     },
     {
       value: "start-dispute",
-      label:
-        activeEscrowType === "single-release"
-          ? "Dispute Escrow"
-          : "Dispute Milestone",
+      label: activeEscrowType === "single-release" ? "Dispute" : "Dispute",
     },
     {
       value: "resolve-dispute",
       label:
         activeEscrowType === "single-release"
-          ? "Resolve Dispute Escrow"
-          : "Resolve Dispute Milestone",
+          ? "Resolve Dispute"
+          : "Resolve Dispute",
     },
     {
       value: "release-funds",
       label:
         activeEscrowType === "single-release"
-          ? "Release Funds Escrow"
-          : "Release Funds Milestone",
+          ? "Release Funds"
+          : "Release Funds",
     },
     {
       value: "update-escrow",
-      label: "Update Escrow",
+      label: "Update",
     },
   ];
 
@@ -103,25 +101,28 @@ export const EscrowTabs = () => {
               Change Status
             </TabsTrigger>
             <TabsTrigger value="approve-milestone" className="flex-1">
-              Approve Milestone
+              Approve
             </TabsTrigger>
             <TabsTrigger value="start-dispute" className="flex-1">
-              {activeEscrowType === "single-release"
-                ? "Dispute Escrow"
-                : "Dispute Milestone"}
+              {activeEscrowType === "single-release" ? "Dispute" : "Dispute"}
             </TabsTrigger>
             <TabsTrigger value="resolve-dispute" className="flex-1">
               {activeEscrowType === "single-release"
-                ? "Resolve Dispute Escrow"
-                : "Resolve Dispute Milestone"}
+                ? "Resolve Dispute"
+                : "Resolve Dispute"}
             </TabsTrigger>
+            {activeEscrowType === "multi-release" && (
+              <TabsTrigger value="withdraw" className="flex-1">
+                Withdraw
+              </TabsTrigger>
+            )}
             <TabsTrigger value="release-funds" className="flex-1">
               {activeEscrowType === "single-release"
-                ? "Release Funds Escrow"
-                : "Release Funds Milestone"}
+                ? "Release Funds"
+                : "Release Funds"}
             </TabsTrigger>
             <TabsTrigger value="update-escrow" className="flex-1">
-              Update Escrow
+              Update
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -150,6 +151,8 @@ export const EscrowTabs = () => {
               ) : (
                 <ResolveDisputeMilestoneForm />
               ))}
+            {activeEscrowTab === "withdraw" &&
+              activeEscrowType === "multi-release" && <WithdrawFundsForm />}
             {activeEscrowTab === "release-funds" &&
               (activeEscrowType === "single-release" ? (
                 <ReleaseFundsEscrowForm />

@@ -1,4 +1,3 @@
-import { useWalletContext } from "@/providers/wallet.provider";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -19,7 +18,6 @@ import { useTabsContext } from "@/providers/tabs.provider";
 type FormData = z.infer<typeof formSchema>;
 
 export const useGetMultipleEscrowBalancesForm = () => {
-  const { walletAddress } = useWalletContext();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<
     EscrowRequestResponse | GetEscrowBalancesResponse[] | null
@@ -30,7 +28,6 @@ export const useGetMultipleEscrowBalancesForm = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      signer: walletAddress || "",
       addresses: [{ value: "" }],
     },
   });
@@ -47,7 +44,6 @@ export const useGetMultipleEscrowBalancesForm = () => {
     // Transform the payload to the correct format
     const transformedData: GetBalanceParams = {
       addresses: payload.addresses.map((a) => a.value),
-      signer: payload.signer,
     };
 
     try {
@@ -59,7 +55,7 @@ export const useGetMultipleEscrowBalancesForm = () => {
        */
       const balances = await getMultipleBalances(
         transformedData,
-        activeEscrowType,
+        activeEscrowType
       );
 
       if (!balances) {
@@ -85,7 +81,7 @@ export const useGetMultipleEscrowBalancesForm = () => {
       console.error("Error:", mappedError.message);
 
       toast.error(
-        mappedError ? mappedError.message : "An unknown error occurred",
+        mappedError ? mappedError.message : "An unknown error occurred"
       );
     } finally {
       setLoading(false);

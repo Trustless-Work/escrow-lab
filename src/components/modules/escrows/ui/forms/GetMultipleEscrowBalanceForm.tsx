@@ -23,21 +23,6 @@ export function GetMultipleEscrowBalanceForm() {
     <div className="w-full md:w-3/4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Signer Address */}
-          <FormField
-            control={form.control}
-            name="signer"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Signer Address</FormLabel>
-                <FormControl>
-                  <Input disabled {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {/* Contract Addresses */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">

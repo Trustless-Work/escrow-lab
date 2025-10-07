@@ -1,4 +1,3 @@
-import { useWalletContext } from "@/providers/wallet.provider";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -12,8 +11,6 @@ import { useGetEscrowFromIndexerByContractIds } from "@trustless-work/escrow/hoo
 import { formSchema } from "../schemas/get-escrows-by-contract-ids.schema";
 
 export const useGetEscrowsByContractIdsForm = () => {
-  const { walletAddress } = useWalletContext();
-  //   const { setEscrow } = useEscrowContext();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] =
     useState<GetEscrowsFromIndexerResponse | null>(null);
@@ -24,7 +21,6 @@ export const useGetEscrowsByContractIdsForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       contractIds: [{ value: "" }],
-      signer: walletAddress || "Connect your wallet to get your address",
       validateOnChain: true,
     },
   });
@@ -42,7 +38,6 @@ export const useGetEscrowsByContractIdsForm = () => {
     try {
       const escrowData = await getEscrowByContractIds({
         contractIds: payload.contractIds.map((item) => item.value),
-        signer: payload.signer,
         validateOnChain: payload.validateOnChain,
       });
 
@@ -50,7 +45,6 @@ export const useGetEscrowsByContractIdsForm = () => {
         throw new Error("No escrow data received");
       }
 
-      //   setEscrow(escrowData);
       setResponse(escrowData);
       toast.success("Escrow data fetched successfully");
     } catch (error: unknown) {

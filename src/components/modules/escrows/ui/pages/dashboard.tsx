@@ -30,9 +30,11 @@ export function Dashboard() {
               open={loadEscrowDialogOpen}
               onOpenChange={setLoadEscrowDialogOpen}
             >
-              <DialogTrigger asChild>
-                <Button variant="outline">Load Escrow</Button>
-              </DialogTrigger>
+              {walletAddress && (
+                <DialogTrigger asChild>
+                  <Button variant="outline">Load Escrow</Button>
+                </DialogTrigger>
+              )}
 
               <DialogContent>
                 <DialogHeader>

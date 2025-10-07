@@ -111,8 +111,9 @@ export const normalizeIndexerToInitializeResponse = (
     engagementId: indexer.engagementId,
     title: indexer.title,
     description: indexer.description,
-    platformFee: indexer.platformFee ?? 0,
+    platformFee: indexer.platformFee * 100,
     receiverMemo: indexer.receiverMemo ?? 0,
+    balance: indexer.balance ?? 0,
     roles: {
       approver: indexer.roles.approver,
       serviceProvider: indexer.roles.serviceProvider,

@@ -10,7 +10,6 @@ import { handleError } from "@/errors/utils/handle-errors";
 import { AxiosError } from "axios";
 import { WalletError } from "@/@types/errors.entity";
 import {
-  MultiReleaseEscrow,
   EscrowRequestResponse,
   WithdrawRemainingFundsPayload,
 } from "@trustless-work/escrow/types";

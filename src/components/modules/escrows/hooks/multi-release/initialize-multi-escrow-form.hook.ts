@@ -33,7 +33,7 @@ export const useInitializeMultiEscrowForm = () => {
     useState<InitializeMultiReleaseEscrowResponse | null>(null);
   const { walletAddress } = useWalletContext();
   const { setEscrow } = useEscrowContext();
-  const { setActiveTab } = useTabsContext();
+  const { setActiveTab, setActiveEscrowTab } = useTabsContext();
 
   const { deployEscrow } = useInitializeEscrowHook();
   const { sendTransaction } = useSendTransaction();
@@ -189,6 +189,7 @@ export const useInitializeMultiEscrowForm = () => {
         );
         setEscrow(escrow);
         setActiveTab("escrow");
+        setActiveEscrowTab("fund-escrow");
         toast.success("Escrow Created");
       } else if (data && data.status !== "SUCCESS") {
         throw new Error(

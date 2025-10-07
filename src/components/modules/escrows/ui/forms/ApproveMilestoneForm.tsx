@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import {
   Form,
   FormField,
@@ -89,26 +88,6 @@ export function ApproveMilestoneForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="newFlag"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                <div className="space-y-0.5">
-                  <FormLabel>Approve Milestone</FormLabel>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    disabled
-                    onCheckedChange={field.onChange}
-                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

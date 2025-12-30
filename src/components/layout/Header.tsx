@@ -2,16 +2,9 @@
 
 import Image from "next/image";
 import { ThemeToggle } from "../utils/theme-toggle";
-import { Button } from "../ui/button";
-import { LogOut, LogIn } from "lucide-react";
-import { useWallet } from "../modules/auth/hooks/wallet.hook";
-import { useWalletContext } from "@/providers/wallet.provider";
-import { WalletButton } from "../utils/wallet-button";
+import { WalletButton } from "../tw-blocks/wallet-kit/WalletButtons";
 
 export const Header = () => {
-  const { walletAddress } = useWalletContext();
-  const { handleDisconnect, handleConnect } = useWallet();
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-2">
       <div className="container mx-auto flex h-20 items-center justify-between">
@@ -25,23 +18,14 @@ export const Header = () => {
           <p className="text-xl font-bold hidden md:block">
             Trustless Work{" "}
             <span className="text-muted-foreground/80 text-base italic">
-              Testnet Demo
+              Testnet Laboratory
             </span>
           </p>
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <WalletButton />
 
-          {walletAddress ? (
-            <Button variant="outline" onClick={handleDisconnect}>
-              <LogOut /> <span className="hidden sm:inline">Disconnect</span>
-            </Button>
-          ) : (
-            <Button variant="outline" onClick={handleConnect}>
-              <LogIn /> <span className="hidden sm:inline">Connect</span>
-            </Button>
-          )}
+          <WalletButton />
         </div>
       </div>
     </header>

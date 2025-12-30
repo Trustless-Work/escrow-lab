@@ -14,7 +14,7 @@ import {
 } from "@trustless-work/escrow/types";
 import { useGetEscrowsFromIndexerByRole } from "@trustless-work/escrow/hooks";
 import { getEscrowsByRoleSchema } from "../schemas/get-escrows-by-role-form.schema";
-import { useWalletContext } from "@/providers/wallet.provider";
+import { useWalletContext } from "@/components/tw-blocks/wallet-kit/WalletProvider";
 
 export const useGetEscrowsByRoleForm = () => {
   const { getEscrowsByRole } = useGetEscrowsFromIndexerByRole();

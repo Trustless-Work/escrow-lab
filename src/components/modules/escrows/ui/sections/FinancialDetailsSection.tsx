@@ -1,28 +1,37 @@
 import { DollarSign, Landmark, Percent, PiggyBank } from "lucide-react";
 import {
-  SingleReleaseEscrow,
-  MultiReleaseEscrow,
+  GetEscrowsFromIndexerResponse as Escrow,
+  MultiReleaseMilestone,
 } from "@trustless-work/escrow/types";
 import { useTabsContext } from "@/providers/tabs.provider";
 
 interface FinancialDetailsSectionProps {
-  escrow: SingleReleaseEscrow | MultiReleaseEscrow | null;
+  selectedEscrow: Escrow | null;
 }
 
 export const FinancialDetailsSection = ({
-  escrow,
+  selectedEscrow,
 }: FinancialDetailsSectionProps) => {
   const { activeEscrowType } = useTabsContext();
 
+  const allMilestones =
+    (selectedEscrow?.milestones as MultiReleaseMilestone[]) || [];
+
   const getTotalAmount = () => {
-    if (!escrow) return "0";
+    if (!selectedEscrow) return "0";
+
     if (activeEscrowType === "single-release") {
-      return (escrow as SingleReleaseEscrow).amount;
+      const amount = selectedEscrow.amount;
+      return amount != null && !isNaN(Number(amount)) ? String(amount) : "0";
     }
-    return (escrow as MultiReleaseEscrow).milestones.reduce(
-      (sum, milestone) => sum + milestone.amount,
-      0,
-    );
+
+    const total = allMilestones.reduce((sum: number, milestone) => {
+      const amount = milestone?.amount;
+      return (
+        sum + (amount != null && !isNaN(Number(amount)) ? Number(amount) : 0)
+      );
+    }, 0);
+    return isNaN(total) ? "0" : String(total);
   };
 
   return (
@@ -46,7 +55,10 @@ export const FinancialDetailsSection = ({
           <div>
             <p className="font-medium">Balance</p>
             <p className="text-muted-foreground text-xs">
-              {escrow?.balance || "0"}
+              {selectedEscrow?.balance != null &&
+              !isNaN(Number(selectedEscrow.balance))
+                ? String(selectedEscrow.balance)
+                : "0"}
             </p>
           </div>
         </div>
@@ -56,7 +68,11 @@ export const FinancialDetailsSection = ({
           <div>
             <p className="font-medium">Platform Fee</p>
             <p className="text-muted-foreground text-xs">
-              {escrow?.platformFee ? Number(escrow.platformFee) / 100 : 0}%
+              {selectedEscrow?.platformFee != null &&
+              !isNaN(Number(selectedEscrow.platformFee))
+                ? String(Number(selectedEscrow.platformFee))
+                : "0"}
+              %
             </p>
           </div>
         </div>

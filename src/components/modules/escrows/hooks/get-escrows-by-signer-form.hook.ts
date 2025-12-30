@@ -1,4 +1,4 @@
-import { useWalletContext } from "@/providers/wallet.provider";
+import { useWalletContext } from "@/components/tw-blocks/wallet-kit/WalletProvider";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";

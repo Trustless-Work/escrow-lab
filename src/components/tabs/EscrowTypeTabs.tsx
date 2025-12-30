@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTabsContext } from "@/providers/tabs.provider";
-import { useEscrowContext } from "@/providers/escrow.provider";
+import { useEscrowContext } from "@/components/tw-blocks/providers/EscrowProvider";
 
 const tabs = [
   { id: "multi-release", label: "Multi Release Escrow" },
@@ -11,9 +11,9 @@ const tabs = [
 
 export const EscrowTypeTabs = () => {
   const { activeEscrowType, setActiveEscrowType } = useTabsContext();
-  const { escrow } = useEscrowContext();
+  const { selectedEscrow } = useEscrowContext();
 
-  const disabled = !!escrow;
+  const disabled = !!selectedEscrow;
 
   return (
     <div className="w-full">
@@ -25,7 +25,7 @@ export const EscrowTypeTabs = () => {
               onClick={() => {
                 if (!disabled) {
                   setActiveEscrowType(
-                    tab.id as "single-release" | "multi-release",
+                    tab.id as "single-release" | "multi-release"
                   );
                 }
               }}

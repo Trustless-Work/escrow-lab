@@ -1,7 +1,7 @@
 import { CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEscrowContext } from "@/providers/escrow.provider";
+import { useEscrowContext } from "@/components/tw-blocks/providers/EscrowProvider";
 import { AlertCircle, Milestone as MilestoneIcon, User } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { EntityCard } from "../cards/EntityCard";
@@ -12,16 +12,18 @@ import { HeaderSection } from "./HeaderSection";
 import {
   MultiReleaseMilestone,
   SingleReleaseMilestone,
+  SingleReleaseEscrow,
+  MultiReleaseEscrow,
 } from "@trustless-work/escrow/types";
 import { useTabsContext } from "@/providers/tabs.provider";
 
 export const EscrowCreatedSection = () => {
-  const { escrow } = useEscrowContext();
+  const { selectedEscrow } = useEscrowContext();
   const { activeEscrowType } = useTabsContext();
 
-  const totalMilestones = escrow?.milestones.length || 0;
+  const totalMilestones = selectedEscrow?.milestones.length || 0;
   const completedMilestones =
-    escrow?.milestones.filter(
+    selectedEscrow?.milestones.filter(
       (m: SingleReleaseMilestone | MultiReleaseMilestone) => {
         if (activeEscrowType === "single-release") {
           const singleMilestone = m as SingleReleaseMilestone;
@@ -43,11 +45,11 @@ export const EscrowCreatedSection = () => {
   const progressPercentage =
     totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
 
-  return escrow ? (
+  return selectedEscrow ? (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       <Card className="border-l-4 border-l-primary shadow-sm">
         <CardHeader className="pb-2">
-          <HeaderSection escrow={escrow} />
+          <HeaderSection selectedEscrow={selectedEscrow} />
         </CardHeader>
 
         <CardContent>
@@ -63,11 +65,11 @@ export const EscrowCreatedSection = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-10 gap-10">
             <div className="md:col-span-6">
-              <EscrowDetailsSection escrow={escrow} />
+              <EscrowDetailsSection selectedEscrow={selectedEscrow} />
             </div>
 
             <div className="md:col-span-4">
-              <FinancialDetailsSection escrow={escrow} />
+              <FinancialDetailsSection selectedEscrow={selectedEscrow} />
             </div>
           </div>
 
@@ -76,37 +78,41 @@ export const EscrowCreatedSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <EntityCard
               name="Service Provider"
-              entity={escrow?.roles.serviceProvider || ""}
+              entity={selectedEscrow?.roles.serviceProvider || ""}
               icon={<User size={20} />}
             />
 
             <EntityCard
               name="Approver"
-              entity={escrow?.roles.approver || ""}
+              entity={selectedEscrow?.roles.approver || ""}
               icon={<User size={20} />}
             />
 
-            <EntityCard
-              name="Receiver"
-              entity={escrow?.roles.receiver || ""}
-              icon={<User size={20} />}
-            />
+            {selectedEscrow.type === "single-release" && (
+              <EntityCard
+                name="Receiver"
+                entity={
+                  (selectedEscrow as SingleReleaseEscrow)?.roles?.receiver || ""
+                }
+                icon={<User size={20} />}
+              />
+            )}
 
             <EntityCard
               name="Platform"
-              entity={escrow?.roles.platformAddress || ""}
+              entity={selectedEscrow?.roles.platformAddress || ""}
               icon={<User size={20} />}
             />
 
             <EntityCard
               name="Dispute Resolver"
-              entity={escrow?.roles.disputeResolver || ""}
+              entity={selectedEscrow?.roles.disputeResolver || ""}
               icon={<User size={20} />}
             />
 
             <EntityCard
               name="Release Signer"
-              entity={escrow?.roles.releaseSigner || ""}
+              entity={selectedEscrow?.roles.releaseSigner || ""}
               icon={<User size={20} />}
             />
           </div>
@@ -121,7 +127,7 @@ export const EscrowCreatedSection = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <EscrowMilestonesSection escrow={escrow} />
+          <EscrowMilestonesSection selectedEscrow={selectedEscrow} />
         </CardContent>
       </Card>
     </div>

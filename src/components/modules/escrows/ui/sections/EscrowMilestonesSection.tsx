@@ -2,27 +2,26 @@ import { Badge } from "@/components/ui/badge";
 import {
   SingleReleaseMilestone,
   MultiReleaseMilestone,
-  SingleReleaseEscrow,
-  MultiReleaseEscrow,
+  GetEscrowsFromIndexerResponse as Escrow,
 } from "@trustless-work/escrow/types";
 import { AlertCircle, CheckCircle2, DollarSign, Handshake } from "lucide-react";
 import { useTabsContext } from "@/providers/tabs.provider";
 
 interface EscrowMilestonesSectionProps {
-  escrow: SingleReleaseEscrow | MultiReleaseEscrow | null;
+  selectedEscrow: Escrow | null;
 }
 
 export const EscrowMilestonesSection = ({
-  escrow,
+  selectedEscrow,
 }: EscrowMilestonesSectionProps) => {
   const { activeEscrowType } = useTabsContext();
 
   return (
     <div className="space-y-4">
-      {escrow?.milestones.map(
+      {selectedEscrow?.milestones.map(
         (
           milestone: SingleReleaseMilestone | MultiReleaseMilestone,
-          index: number,
+          index: number
         ) => (
           <div
             key={index}
@@ -144,7 +143,7 @@ export const EscrowMilestonesSection = ({
               </div>
             )}
           </div>
-        ),
+        )
       )}
     </div>
   );

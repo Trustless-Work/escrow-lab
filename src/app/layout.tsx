@@ -10,9 +10,8 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Trustless Work Demo",
-  description: "Demo for Trustless Work API",
-  generator: "v0.dev",
+  title: "Escrow Lab",
+  description: "Escrow Lab",
 };
 
 export default function RootLayout({

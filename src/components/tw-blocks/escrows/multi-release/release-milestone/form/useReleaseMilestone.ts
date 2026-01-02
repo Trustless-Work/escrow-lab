@@ -1,39 +1,46 @@
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { useEscrowsMutations } from "@/components/tw-blocks/tanstack/useEscrowsMutations";
-import { useWalletContext } from "@/components/tw-blocks/wallet-kit/WalletProvider";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  releaseMilestoneSchema,
+  type ReleaseMilestoneValues,
+} from "./schema";
+import { toast } from "sonner";
 import {
   MultiReleaseReleaseFundsPayload,
   MultiReleaseMilestone,
-} from "@trustless-work/escrow/types";
-import { toast } from "sonner";
+} from "@trustless-work/escrow";
+import { useEscrowContext } from "@/components/tw-blocks/providers/EscrowProvider";
+import { useEscrowsMutations } from "@/components/tw-blocks/tanstack/useEscrowsMutations";
 import {
   ErrorResponse,
   handleError,
 } from "@/components/tw-blocks/handle-errors/handle";
-import { useEscrowContext } from "@/components/tw-blocks/providers/EscrowProvider";
+import { useWalletContext } from "@/components/tw-blocks/wallet-kit/WalletProvider";
 import { useEscrowDialogs } from "@/components/tw-blocks/providers/EscrowDialogsProvider";
 import { useEscrowAmountContext } from "@/components/tw-blocks/providers/EscrowAmountProvider";
-import { Loader2 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import Link from "next/link";
 
-type ReleaseMilestoneButtonProps = {
-  milestoneIndex: number | string;
-};
-
-export const ReleaseMilestoneButton = ({
-  milestoneIndex,
-}: ReleaseMilestoneButtonProps) => {
+export function useReleaseMilestone({
+  onSuccess,
+}: { onSuccess?: () => void } = {}) {
   const { releaseFunds } = useEscrowsMutations();
   const { selectedEscrow, updateEscrow } = useEscrowContext();
   const dialogStates = useEscrowDialogs();
   const { setAmounts, setLastReleasedMilestoneIndex } =
     useEscrowAmountContext();
   const { walletAddress } = useWalletContext();
+
+  const form = useForm<ReleaseMilestoneValues>({
+    resolver: zodResolver(releaseMilestoneSchema),
+    defaultValues: {
+      milestoneIndex: "0",
+    },
+    mode: "onChange",
+  });
+
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  async function handleClick() {
+  const handleSubmit = form.handleSubmit(async (payload) => {
     try {
       setIsSubmitting(true);
 
@@ -42,10 +49,10 @@ export const ReleaseMilestoneButton = ({
        *
        * @returns The payload for the release escrow mutation
        */
-      const payload: MultiReleaseReleaseFundsPayload = {
+      const finalPayload: MultiReleaseReleaseFundsPayload = {
         contractId: selectedEscrow?.contractId || "",
         releaseSigner: walletAddress || "",
-        milestoneIndex: String(milestoneIndex),
+        milestoneIndex: String(payload.milestoneIndex),
       };
 
       /**
@@ -56,7 +63,7 @@ export const ReleaseMilestoneButton = ({
        * @param address - The address of the escrow
        */
       await releaseFunds.mutateAsync({
-        payload,
+        payload: finalPayload,
         type: "multi-release",
         address: walletAddress || "",
       });
@@ -65,7 +72,7 @@ export const ReleaseMilestoneButton = ({
 
       // Ensure amounts are up to date for the success dialog
       if (selectedEscrow) {
-        const milestone = selectedEscrow.milestones?.[Number(milestoneIndex)];
+        const milestone = selectedEscrow.milestones?.[Number(payload.milestoneIndex)];
         const releasedAmount = Number(
           (milestone as MultiReleaseMilestone | undefined)?.amount || 0
         );
@@ -76,7 +83,7 @@ export const ReleaseMilestoneButton = ({
       updateEscrow({
         ...selectedEscrow,
         milestones: selectedEscrow?.milestones.map((milestone, index) => {
-          if (index === Number(milestoneIndex)) {
+          if (index === Number(payload.milestoneIndex)) {
             return {
               ...milestone,
               flags: {
@@ -91,48 +98,24 @@ export const ReleaseMilestoneButton = ({
       });
 
       // Remember which milestone was released for the success dialog
-      setLastReleasedMilestoneIndex(Number(milestoneIndex));
+      setLastReleasedMilestoneIndex(Number(payload.milestoneIndex));
 
       // Open success dialog
       dialogStates.successRelease.setIsOpen(true);
+
+      onSuccess?.();
     } catch (error) {
       toast.error(handleError(error as ErrorResponse).message);
     } finally {
       setIsSubmitting(false);
+      form.reset();
     }
-  }
+  });
 
-  return (
-    <>
-      <Card className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 mb-4">
-        <Link
-          className="flex-1"
-          href="https://docs.trustlesswork.com/trustless-work/api-reference/getting-started#finalization"
-          target="_blank"
-        >
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <h2 className="text-xl font-semibold">Release Milestone</h2>
-          </div>
-          <p className="text-muted-foreground mt-1">Release a milestone</p>
-        </Link>
-      </Card>
+  return {
+    form,
+    handleSubmit,
+    isSubmitting,
+  };
+}
 
-      <Button
-        type="button"
-        disabled={isSubmitting}
-        onClick={handleClick}
-        className="cursor-pointer w-full"
-      >
-        {isSubmitting ? (
-          <div className="flex items-center">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="ml-2">Releasing...</span>
-          </div>
-        ) : (
-          "Release Milestone"
-        )}
-      </Button>
-    </>
-  );
-};

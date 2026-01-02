@@ -15,14 +15,14 @@ import { FundEscrowForm } from "../tw-blocks/escrows/single-multi-release/fund-e
 import { ChangeMilestoneStatusForm } from "../tw-blocks/escrows/single-multi-release/change-milestone-status/form/ChangeMilestoneStatus";
 import { ApproveMilestoneForm } from "../tw-blocks/escrows/single-multi-release/approve-milestone/form/ApproveMilestone";
 import { DisputeEscrowButton } from "../tw-blocks/escrows/single-release/dispute-escrow/button/DisputeEscrow";
-import { DisputeMilestoneButton } from "../tw-blocks/escrows/multi-release/dispute-milestone/button/DisputeMilestone";
 import { ResolveDisputeForm } from "../tw-blocks/escrows/single-release/resolve-dispute/form/ResolveDispute";
 import { ResolveDisputeForm as ResolveDisputeMultiForm } from "../tw-blocks/escrows/multi-release/resolve-dispute/form/ResolveDispute";
 import { WithdrawRemainingFundsForm } from "../tw-blocks/escrows/multi-release/withdraw-remaining-funds/form/WithdrawRemainingFunds";
 import { ReleaseEscrowButton } from "../tw-blocks/escrows/single-release/release-escrow/button/ReleaseEscrow";
-import { ReleaseMilestoneButton } from "../tw-blocks/escrows/multi-release/release-milestone/button/ReleaseMilestone";
 import { UpdateEscrowForm } from "../tw-blocks/escrows/single-release/update-escrow/form/UpdateEscrow";
 import { UpdateEscrowForm as UpdateMultiEscrowForm } from "../tw-blocks/escrows/multi-release/update-escrow/form/UpdateEscrow";
+import { ReleaseMilestoneForm } from "../tw-blocks/escrows/multi-release/release-milestone/form/ReleaseMilestone";
+import { DisputeMilestoneForm } from "../tw-blocks/escrows/multi-release/dispute-milestone/form/DisputeMilestone";
 
 export const EscrowTabs = () => {
   const { activeEscrowTab, activeEscrowType, setActiveEscrowTab } =
@@ -143,14 +143,13 @@ export const EscrowTabs = () => {
               (activeEscrowType === "single-release" ? (
                 <DisputeEscrowButton />
               ) : (
-                // TODO: Add milestone index
-                <DisputeMilestoneButton milestoneIndex={0} />
+                <DisputeMilestoneForm />
               ))}
             {activeEscrowTab === "resolve-dispute" &&
               (activeEscrowType === "single-release" ? (
                 <ResolveDisputeForm />
               ) : (
-                <ResolveDisputeMultiForm />
+                <ResolveDisputeMultiForm showSelectMilestone />
               ))}
             {activeEscrowTab === "withdraw" &&
               activeEscrowType === "multi-release" && (
@@ -160,8 +159,7 @@ export const EscrowTabs = () => {
               (activeEscrowType === "single-release" ? (
                 <ReleaseEscrowButton />
               ) : (
-                // TODO: Add milestone index
-                <ReleaseMilestoneButton milestoneIndex={0} />
+                <ReleaseMilestoneForm />
               ))}
             {activeEscrowTab === "update-escrow" &&
               (activeEscrowType === "single-release" ? (

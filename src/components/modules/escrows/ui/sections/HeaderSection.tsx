@@ -1,8 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 import { useTabsContext } from "@/providers/tabs.provider";
-import { SingleReleaseEscrow } from "@trustless-work/escrow/types";
-import { MultiReleaseEscrow } from "@trustless-work/escrow/types";
+import {
+  GetEscrowsFromIndexerResponse as Escrow,
+  MultiReleaseMilestone,
+} from "@trustless-work/escrow/types";
 import {
   AlertCircle,
   AudioWaveform,
@@ -16,15 +18,15 @@ import {
 import Link from "next/link";
 
 interface HeaderSectionProps {
-  escrow: SingleReleaseEscrow | MultiReleaseEscrow | null;
+  selectedEscrow: Escrow | null;
 }
 
-export const HeaderSection = ({ escrow }: HeaderSectionProps) => {
+export const HeaderSection = ({ selectedEscrow }: HeaderSectionProps) => {
   const { activeEscrowType } = useTabsContext();
 
   // For multi-release escrows, check if all milestones are released/resolved/disputed
-  const getMultiReleaseStatus = (escrow: MultiReleaseEscrow) => {
-    const allMilestones = escrow.milestones;
+  const getMultiReleaseStatus = (selectedEscrow: Escrow) => {
+    const allMilestones = selectedEscrow.milestones as MultiReleaseMilestone[];
     const allReleased = allMilestones.every((m) => m.flags?.released);
     const allResolved = allMilestones.every((m) => m.flags?.resolved);
     const anyDisputed = allMilestones.some((m) => m.flags?.disputed);
@@ -38,12 +40,12 @@ export const HeaderSection = ({ escrow }: HeaderSectionProps) => {
 
   // Get the status flags based on escrow type
   const getStatusFlags = () => {
-    if (!escrow) return null;
+    if (!selectedEscrow) return null;
 
     if (activeEscrowType === "single-release") {
-      return (escrow as SingleReleaseEscrow).flags;
+      return selectedEscrow.flags;
     } else {
-      return getMultiReleaseStatus(escrow as MultiReleaseEscrow);
+      return getMultiReleaseStatus(selectedEscrow);
     }
   };
 
@@ -54,7 +56,7 @@ export const HeaderSection = ({ escrow }: HeaderSectionProps) => {
       <div className="flex justify-between items-start gap-4 flex-wrap">
         <div className="flex items-center gap-2">
           <FileContract className="h-5 w-5 text-primary" />
-          <CardTitle>{escrow?.title}</CardTitle>
+          <CardTitle>{selectedEscrow?.title}</CardTitle>
 
           {activeEscrowType === "single-release" && (
             <Badge variant="secondary" className="gap-2">
@@ -73,7 +75,7 @@ export const HeaderSection = ({ escrow }: HeaderSectionProps) => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <Link
-            href={`https://viewer.trustlesswork.com/${escrow?.contractId}`}
+            href={`https://viewer.trustlesswork.com/${selectedEscrow?.contractId}`}
             target="_blank"
           >
             <Badge variant="outline" className="gap-2">
@@ -82,7 +84,7 @@ export const HeaderSection = ({ escrow }: HeaderSectionProps) => {
           </Link>
 
           <Link
-            href={`https://stellar.expert/explorer/testnet/contract/${escrow?.contractId}`}
+            href={`https://stellar.expert/explorer/testnet/contract/${selectedEscrow?.contractId}`}
             target="_blank"
           >
             <Badge variant="outline" className="gap-2">
@@ -121,7 +123,7 @@ export const HeaderSection = ({ escrow }: HeaderSectionProps) => {
         </div>
       </div>
       <CardDescription className="text-sm mt-1">
-        {escrow?.description}
+        {selectedEscrow?.description}
       </CardDescription>
     </>
   );

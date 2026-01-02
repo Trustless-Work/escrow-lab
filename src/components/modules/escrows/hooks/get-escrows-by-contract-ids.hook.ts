@@ -12,8 +12,9 @@ import { formSchema } from "../schemas/get-escrows-by-contract-ids.schema";
 
 export const useGetEscrowsByContractIdsForm = () => {
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] =
-    useState<GetEscrowsFromIndexerResponse | null>(null);
+  const [response, setResponse] = useState<
+    GetEscrowsFromIndexerResponse[] | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
   const { getEscrowByContractIds } = useGetEscrowFromIndexerByContractIds();
 

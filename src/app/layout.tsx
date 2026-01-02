@@ -5,14 +5,12 @@ import "./globals.css";
 import { GlobalProvider } from "@/providers/global.provider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Trustless Work Demo",
-  description: "Demo for Trustless Work API",
-  generator: "v0.dev",
+  title: "Escrow Lab",
+  description: "Escrow Lab",
 };
 
 export default function RootLayout({
@@ -24,7 +22,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <GlobalProvider>
-          <Toaster />
           <div className="min-h-screen">
             <div className="flex-1 space-y-4 px-4 h-full">
               <Header />

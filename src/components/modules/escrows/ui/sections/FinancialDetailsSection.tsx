@@ -1,30 +1,19 @@
+import { formatCurrency } from "@/components/tw-blocks/helpers/format.helper";
 import { DollarSign, Landmark, Percent, PiggyBank } from "lucide-react";
-import {
-  SingleReleaseEscrow,
-  MultiReleaseEscrow,
-} from "@trustless-work/escrow/types";
-import { useTabsContext } from "@/providers/tabs.provider";
 
 interface FinancialDetailsSectionProps {
-  escrow: SingleReleaseEscrow | MultiReleaseEscrow | null;
+  balance: number;
+  totalAmount: number;
+  currency: string;
+  platformFee: number;
 }
 
 export const FinancialDetailsSection = ({
-  escrow,
+  balance,
+  totalAmount,
+  currency,
+  platformFee,
 }: FinancialDetailsSectionProps) => {
-  const { activeEscrowType } = useTabsContext();
-
-  const getTotalAmount = () => {
-    if (!escrow) return "0";
-    if (activeEscrowType === "single-release") {
-      return (escrow as SingleReleaseEscrow).amount;
-    }
-    return (escrow as MultiReleaseEscrow).milestones.reduce(
-      (sum, milestone) => sum + milestone.amount,
-      0,
-    );
-  };
-
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -37,7 +26,9 @@ export const FinancialDetailsSection = ({
           <DollarSign className="h-4 w-4 text-muted-foreground mt-0.5" />
           <div>
             <p className="font-medium">Total Amount</p>
-            <p className="text-muted-foreground text-xs">{getTotalAmount()}</p>
+            <p className="text-muted-foreground text-xs">
+              {formatCurrency(totalAmount, currency)}
+            </p>
           </div>
         </div>
 
@@ -46,7 +37,7 @@ export const FinancialDetailsSection = ({
           <div>
             <p className="font-medium">Balance</p>
             <p className="text-muted-foreground text-xs">
-              {escrow?.balance || "0"}
+              {formatCurrency(balance, currency)}
             </p>
           </div>
         </div>
@@ -55,9 +46,7 @@ export const FinancialDetailsSection = ({
           <Percent className="h-4 w-4 text-muted-foreground mt-0.5" />
           <div>
             <p className="font-medium">Platform Fee</p>
-            <p className="text-muted-foreground text-xs">
-              {escrow?.platformFee ? Number(escrow.platformFee) / 100 : 0}%
-            </p>
+            <p className="text-muted-foreground text-xs">{platformFee}%</p>
           </div>
         </div>
       </div>

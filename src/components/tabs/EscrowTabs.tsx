@@ -1,11 +1,3 @@
-import { DisputeEscrowForm } from "../modules/escrows/ui/forms/single-release/DisputeEscrow";
-import { FundEscrowForm } from "../modules/escrows/ui/forms/FundEscrowForm";
-import { ChangeMilestoneStatusForm } from "../modules/escrows/ui/forms/ChangeMilestoneStatusForm";
-import { ApproveMilestoneForm } from "../modules/escrows/ui/forms/ApproveMilestoneForm";
-import { ReleaseFundsEscrowForm } from "../modules/escrows/ui/forms/single-release/ReleaseFundsEscrowForm";
-import { ResolveDisputeEscrowForm } from "../modules/escrows/ui/forms/single-release/ResolveDisputeEscrowForm";
-import { ResolveDisputeMilestoneForm } from "../modules/escrows/ui/forms/multi-release/ResolveDisputeMilestoneForm";
-import { UpdateSingleEscrowForm } from "../modules/escrows/ui/forms/single-release/UpdateSingleEscrowForm";
 import { EscrowCreatedSection } from "../modules/escrows/ui/sections/EscrowCreatedSection";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -19,10 +11,18 @@ import {
   EscrowTabs as EscrowTabsType,
   useTabsContext,
 } from "@/providers/tabs.provider";
-import { DisputeMilestoneForm } from "../modules/escrows/ui/forms/multi-release/DisputeMilestoneForm";
-import { ReleaseFundsMilestoneForm } from "../modules/escrows/ui/forms/multi-release/ReleaseFundsMilestoneForm";
-import { UpdateMultiEscrowForm } from "../modules/escrows/ui/forms/multi-release/UpdateMultiEscrowForm";
-import { WithdrawFundsForm } from "../modules/escrows/ui/forms/multi-release/WithdrawFundsForm";
+import { FundEscrowForm } from "../tw-blocks/escrows/single-multi-release/fund-escrow/form/FundEscrow";
+import { ChangeMilestoneStatusForm } from "../tw-blocks/escrows/single-multi-release/change-milestone-status/form/ChangeMilestoneStatus";
+import { ApproveMilestoneForm } from "../tw-blocks/escrows/single-multi-release/approve-milestone/form/ApproveMilestone";
+import { DisputeEscrowButton } from "../tw-blocks/escrows/single-release/dispute-escrow/button/DisputeEscrow";
+import { ResolveDisputeForm } from "../tw-blocks/escrows/single-release/resolve-dispute/form/ResolveDispute";
+import { ResolveDisputeForm as ResolveDisputeMultiForm } from "../tw-blocks/escrows/multi-release/resolve-dispute/form/ResolveDispute";
+import { WithdrawRemainingFundsForm } from "../tw-blocks/escrows/multi-release/withdraw-remaining-funds/form/WithdrawRemainingFunds";
+import { ReleaseEscrowButton } from "../tw-blocks/escrows/single-release/release-escrow/button/ReleaseEscrow";
+import { UpdateEscrowForm } from "../tw-blocks/escrows/single-release/update-escrow/form/UpdateEscrow";
+import { UpdateEscrowForm as UpdateMultiEscrowForm } from "../tw-blocks/escrows/multi-release/update-escrow/form/UpdateEscrow";
+import { ReleaseMilestoneForm } from "../tw-blocks/escrows/multi-release/release-milestone/form/ReleaseMilestone";
+import { DisputeMilestoneForm } from "../tw-blocks/escrows/multi-release/dispute-milestone/form/DisputeMilestone";
 
 export const EscrowTabs = () => {
   const { activeEscrowTab, activeEscrowType, setActiveEscrowTab } =
@@ -141,27 +141,29 @@ export const EscrowTabs = () => {
             )}
             {activeEscrowTab === "start-dispute" &&
               (activeEscrowType === "single-release" ? (
-                <DisputeEscrowForm />
+                <DisputeEscrowButton />
               ) : (
                 <DisputeMilestoneForm />
               ))}
             {activeEscrowTab === "resolve-dispute" &&
               (activeEscrowType === "single-release" ? (
-                <ResolveDisputeEscrowForm />
+                <ResolveDisputeForm />
               ) : (
-                <ResolveDisputeMilestoneForm />
+                <ResolveDisputeMultiForm showSelectMilestone />
               ))}
             {activeEscrowTab === "withdraw" &&
-              activeEscrowType === "multi-release" && <WithdrawFundsForm />}
+              activeEscrowType === "multi-release" && (
+                <WithdrawRemainingFundsForm />
+              )}
             {activeEscrowTab === "release-funds" &&
               (activeEscrowType === "single-release" ? (
-                <ReleaseFundsEscrowForm />
+                <ReleaseEscrowButton />
               ) : (
-                <ReleaseFundsMilestoneForm />
+                <ReleaseMilestoneForm />
               ))}
             {activeEscrowTab === "update-escrow" &&
               (activeEscrowType === "single-release" ? (
-                <UpdateSingleEscrowForm />
+                <UpdateEscrowForm />
               ) : (
                 <UpdateMultiEscrowForm />
               ))}

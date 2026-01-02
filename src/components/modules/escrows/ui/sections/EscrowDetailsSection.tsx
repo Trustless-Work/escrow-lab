@@ -1,14 +1,13 @@
-import {
-  SingleReleaseEscrow,
-  MultiReleaseEscrow,
-} from "@trustless-work/escrow/types";
+import { GetEscrowsFromIndexerResponse as Escrow } from "@trustless-work/escrow/types";
 import { FileText, Info, Shield } from "lucide-react";
 
 interface EscrowDetailsSectionProps {
-  escrow: SingleReleaseEscrow | MultiReleaseEscrow | null;
+  selectedEscrow: Escrow | null;
 }
 
-export const EscrowDetailsSection = ({ escrow }: EscrowDetailsSectionProps) => {
+export const EscrowDetailsSection = ({
+  selectedEscrow,
+}: EscrowDetailsSectionProps) => {
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -22,7 +21,7 @@ export const EscrowDetailsSection = ({ escrow }: EscrowDetailsSectionProps) => {
           <div>
             <p className="font-medium">Escrow ID</p>
             <p className="text-muted-foreground break-all text-xs">
-              {escrow?.contractId || "Not deployed yet"}
+              {selectedEscrow?.contractId || "Not deployed yet"}
             </p>
           </div>
         </div>
@@ -32,7 +31,7 @@ export const EscrowDetailsSection = ({ escrow }: EscrowDetailsSectionProps) => {
           <div>
             <p className="font-medium">Engagement ID</p>
             <p className="text-muted-foreground text-xs">
-              {escrow?.engagementId || "Not deployed yet"}
+              {selectedEscrow?.engagementId || "Not deployed yet"}
             </p>
           </div>
         </div>

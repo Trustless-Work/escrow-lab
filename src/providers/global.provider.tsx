@@ -1,11 +1,14 @@
 "use client";
 
 import { ThemeProvider } from "@/providers/theme.provider";
-import { EscrowProvider } from "./escrow.provider";
-import { WalletProvider } from "./wallet.provider";
 import { TabsProvider } from "./tabs.provider";
-import { TrustlessWorkProvider } from "./trustless-work.provider";
-import { DialogsProvider } from "./dialogs.provider";
+import { ReactQueryClientProvider } from "@/components/tw-blocks/providers/ReactQueryClientProvider";
+import { Toaster } from "sonner";
+import { EscrowAmountProvider } from "@/components/tw-blocks/providers/EscrowAmountProvider";
+import { EscrowDialogsProvider } from "@/components/tw-blocks/providers/EscrowDialogsProvider";
+import { TrustlessWorkProvider } from "@/components/tw-blocks/providers/TrustlessWork";
+import { WalletProvider } from "@/components/tw-blocks/wallet-kit/WalletProvider";
+import { EscrowProvider } from "@/components/tw-blocks/providers/EscrowProvider";
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,15 +18,23 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
       enableSystem
       disableTransitionOnChange
     >
-      <WalletProvider>
-        <TrustlessWorkProvider>
-          <TabsProvider>
-            <DialogsProvider>
-              <EscrowProvider>{children}</EscrowProvider>
-            </DialogsProvider>
-          </TabsProvider>
-        </TrustlessWorkProvider>
-      </WalletProvider>
+      <TabsProvider>
+        <ReactQueryClientProvider>
+          <TrustlessWorkProvider>
+            <WalletProvider>
+              <EscrowProvider>
+                <EscrowDialogsProvider>
+                  <EscrowAmountProvider>
+                    {children}
+
+                    <Toaster richColors />
+                  </EscrowAmountProvider>
+                </EscrowDialogsProvider>
+              </EscrowProvider>
+            </WalletProvider>
+          </TrustlessWorkProvider>
+        </ReactQueryClientProvider>
+      </TabsProvider>
     </ThemeProvider>
   );
 };

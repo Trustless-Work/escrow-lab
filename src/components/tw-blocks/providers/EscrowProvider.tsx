@@ -69,7 +69,6 @@ export const EscrowProvider = ({ children }: { children: ReactNode }) => {
         const parsed: Escrow = JSON.parse(stored);
         // This effect initializes state from localStorage once on mount.
         // It is a controlled sync from an external store, so we allow setState here.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedEscrowState(parsed);
       }
     } catch {

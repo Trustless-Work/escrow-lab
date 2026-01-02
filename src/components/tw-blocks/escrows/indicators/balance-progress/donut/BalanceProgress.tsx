@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useGetMultipleEscrowBalancesQuery } from "@/components/tw-blocks/tanstack/useGetMultipleEscrowBalances";
 import { formatCurrency } from "@/components/tw-blocks/helpers/format.helper";
 
 type BalanceProgressDonutProps = {

@@ -4,13 +4,7 @@ import {
   MultiReleaseMilestone,
   GetEscrowsFromIndexerResponse as Escrow,
 } from "@trustless-work/escrow/types";
-import {
-  AlertCircle,
-  CheckCircle2,
-  DollarSign,
-  Handshake,
-  User,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, Handshake, User } from "lucide-react";
 import { useTabsContext } from "@/providers/tabs.provider";
 import { EntityCard } from "../cards/EntityCard";
 import { Separator } from "@/components/ui/separator";

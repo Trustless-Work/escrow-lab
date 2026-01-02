@@ -11,9 +11,7 @@ import { EscrowMilestonesSection } from "./EscrowMilestonesSection";
 import { HeaderSection } from "./HeaderSection";
 import {
   MultiReleaseMilestone,
-  SingleReleaseMilestone,
   SingleReleaseEscrow,
-  MultiReleaseEscrow,
 } from "@trustless-work/escrow/types";
 import { useTabsContext } from "@/providers/tabs.provider";
 import { BalanceProgressDonut } from "@/components/tw-blocks/escrows/indicators/balance-progress/donut/BalanceProgress";

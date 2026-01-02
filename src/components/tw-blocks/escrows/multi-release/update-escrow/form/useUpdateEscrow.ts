@@ -47,7 +47,6 @@ export function useUpdateEscrow({
         | undefined,
       trustline: {
         address: selectedEscrow?.trustline?.address || "",
-        symbol: selectedEscrow?.trustline?.symbol || "",
       },
       roles: {
         approver: selectedEscrow?.roles?.approver || "",
@@ -87,7 +86,6 @@ export function useUpdateEscrow({
           | undefined) || "",
       trustline: {
         address: selectedEscrow?.trustline?.address || "",
-        symbol: selectedEscrow?.trustline?.symbol || "",
       },
       roles: {
         approver: selectedEscrow?.roles?.approver || "",

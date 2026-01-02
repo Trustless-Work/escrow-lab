@@ -5,8 +5,13 @@
  * @param currency - The currency
  * @returns The formatted currency
  */
-export const formatCurrency = (value: number, currency: string) => {
-  return `${currency} ${value.toFixed(2)}`;
+export const formatCurrency = (
+  value: number | undefined | null,
+  currency: string | undefined | null
+) => {
+  const safeValue = value != null && !isNaN(Number(value)) ? Number(value) : 0;
+  const safeCurrency = currency || "";
+  return `${safeCurrency} ${safeValue.toFixed(2)}`;
 };
 
 /**

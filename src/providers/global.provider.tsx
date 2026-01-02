@@ -27,7 +27,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                   <EscrowAmountProvider>
                     {children}
 
-                    <Toaster />
+                    <Toaster richColors />
                   </EscrowAmountProvider>
                 </EscrowDialogsProvider>
               </EscrowProvider>

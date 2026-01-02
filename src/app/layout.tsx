@@ -5,7 +5,6 @@ import "./globals.css";
 import { GlobalProvider } from "@/providers/global.provider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +22,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <GlobalProvider>
-          <Toaster richColors />
           <div className="min-h-screen">
             <div className="flex-1 space-y-4 px-4 h-full">
               <Header />

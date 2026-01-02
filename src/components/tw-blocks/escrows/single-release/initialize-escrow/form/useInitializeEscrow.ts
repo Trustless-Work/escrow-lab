@@ -27,7 +27,8 @@ export function useInitializeEscrow({
   const formSchema = getSingleReleaseFormSchema();
   const { setSelectedEscrow } = useEscrowContext();
 
-  const { setActiveTab, setActiveEscrowTab } = useTabsContext();
+  const { setActiveTab, setActiveEscrowTab, setActiveEscrowType } =
+    useTabsContext();
 
   const { walletAddress } = useWalletContext();
   const { deployEscrow } = useEscrowsMutations();
@@ -168,6 +169,7 @@ export function useInitializeEscrow({
 
       setActiveTab("escrow");
       setActiveEscrowTab("fund-escrow");
+      setActiveEscrowType("single-release");
     } catch (error) {
       toast.error(handleError(error as ErrorResponse).message);
     } finally {

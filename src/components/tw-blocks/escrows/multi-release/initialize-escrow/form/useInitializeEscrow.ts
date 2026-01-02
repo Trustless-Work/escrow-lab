@@ -27,7 +27,8 @@ export function useInitializeEscrow({
   const formSchema = getMultiReleaseFormSchema();
   const { setSelectedEscrow } = useEscrowContext();
 
-  const { setActiveTab, setActiveEscrowTab } = useTabsContext();
+  const { setActiveTab, setActiveEscrowTab, setActiveEscrowType } =
+    useTabsContext();
 
   const { walletAddress } = useWalletContext();
   const { deployEscrow } = useEscrowsMutations();
@@ -182,6 +183,7 @@ export function useInitializeEscrow({
 
       onSuccess?.();
 
+      setActiveEscrowType("multi-release");
       setActiveTab("escrow");
       setActiveEscrowTab("fund-escrow");
     } catch (error) {

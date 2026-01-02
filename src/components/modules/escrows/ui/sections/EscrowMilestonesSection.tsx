@@ -70,16 +70,18 @@ export const EscrowMilestonesSection = ({
               </div>
             </div>
 
-            <Separator
-              className={`${activeEscrowType === "multi-release" ? "block my-4" : "hidden"}`}
-            />
+            {activeEscrowType === "multi-release" && (
+              <>
+                <Separator className="my-4" />
 
-            <EntityCard
-              name="Receiver"
-              entity={(milestone as MultiReleaseMilestone).receiver || ""}
-              icon={<User size={20} />}
-              className="mb-4"
-            />
+                <EntityCard
+                  name="Receiver"
+                  entity={(milestone as MultiReleaseMilestone).receiver || ""}
+                  icon={<User size={20} />}
+                  className="mb-4"
+                />
+              </>
+            )}
 
             {/* Status badges */}
             <div className="flex flex-wrap gap-2">

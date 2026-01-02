@@ -11,11 +11,13 @@ import { useGetEscrowFromIndexerByContractIds } from "@trustless-work/escrow/hoo
 import { GetEscrowsFromIndexerResponse } from "@trustless-work/escrow/types";
 import { useEscrowContext } from "@/components/tw-blocks/providers/EscrowProvider";
 import { formSchema } from "./schema";
+import { useTabsContext } from "@/providers/tabs.provider";
 
 export const useLoadEscrow = ({
   onSuccess,
 }: { onSuccess?: () => void } = {}) => {
   const { setSelectedEscrow } = useEscrowContext();
+  const { setActiveEscrowType } = useTabsContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { getEscrowByContractIds } = useGetEscrowFromIndexerByContractIds();
 
@@ -44,6 +46,8 @@ export const useLoadEscrow = ({
       }
 
       setSelectedEscrow(escrowData);
+
+      setActiveEscrowType(escrowData.type);
 
       toast.success(
         "Escrow data fetched successfully. Now you can use the selectedEscrow state"

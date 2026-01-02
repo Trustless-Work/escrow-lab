@@ -26,11 +26,8 @@ export const EscrowCreatedSection = () => {
     (selectedEscrow?.milestones as MultiReleaseMilestone[]) || [];
 
   const getTotalAmount = () => {
-    if (!selectedEscrow) return "0";
-
     if (activeEscrowType === "single-release") {
-      const amount = selectedEscrow.amount;
-      return amount != null && !isNaN(Number(amount)) ? String(amount) : "0";
+      return selectedEscrow?.amount;
     }
 
     const total = allMilestones.reduce((sum: number, milestone) => {
@@ -39,6 +36,7 @@ export const EscrowCreatedSection = () => {
         sum + (amount != null && !isNaN(Number(amount)) ? Number(amount) : 0)
       );
     }, 0);
+
     return isNaN(total) ? "0" : String(total);
   };
 

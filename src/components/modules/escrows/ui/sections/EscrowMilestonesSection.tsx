@@ -4,8 +4,18 @@ import {
   MultiReleaseMilestone,
   GetEscrowsFromIndexerResponse as Escrow,
 } from "@trustless-work/escrow/types";
-import { AlertCircle, CheckCircle2, DollarSign, Handshake } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  DollarSign,
+  Handshake,
+  User,
+} from "lucide-react";
 import { useTabsContext } from "@/providers/tabs.provider";
+import { EntityCard } from "../cards/EntityCard";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/components/tw-blocks/helpers/format.helper";
 
 interface EscrowMilestonesSectionProps {
   selectedEscrow: Escrow | null;
@@ -48,15 +58,28 @@ export const EscrowMilestonesSection = ({
 
                   {activeEscrowType === "multi-release" && (
                     <div className="flex-shrink-0">
-                      <Badge variant="outline" className="text-sm">
-                        <DollarSign className="w-3 h-3 mr-1" />
-                        {(milestone as MultiReleaseMilestone).amount}
+                      <Badge variant="outline" className="text-xs">
+                        {formatCurrency(
+                          (milestone as MultiReleaseMilestone).amount,
+                          selectedEscrow?.trustline.symbol
+                        )}
                       </Badge>
                     </div>
                   )}
                 </div>
               </div>
             </div>
+
+            <Separator
+              className={`${activeEscrowType === "multi-release" ? "block my-4" : "hidden"}`}
+            />
+
+            <EntityCard
+              name="Receiver"
+              entity={(milestone as MultiReleaseMilestone).receiver || ""}
+              icon={<User size={20} />}
+              className="mb-4"
+            />
 
             {/* Status badges */}
             <div className="flex flex-wrap gap-2">
@@ -65,11 +88,12 @@ export const EscrowMilestonesSection = ({
                   variant={
                     milestone.status === "approved" ? "default" : "secondary"
                   }
-                  className={
+                  className={cn(
+                    "uppercase",
                     milestone.status === "approved"
                       ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-900/50"
                       : ""
-                  }
+                  )}
                 >
                   {milestone.status === "approved" ? (
                     <>
@@ -87,7 +111,7 @@ export const EscrowMilestonesSection = ({
                 (milestone as SingleReleaseMilestone).approved && (
                   <Badge
                     variant="secondary"
-                    className="text-green-700 dark:text-green-300"
+                    className="text-green-700 dark:text-green-300 uppercase"
                   >
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     Approved
@@ -99,7 +123,7 @@ export const EscrowMilestonesSection = ({
                   {(milestone as MultiReleaseMilestone).flags?.approved && (
                     <Badge
                       variant="secondary"
-                      className="text-green-700 dark:text-green-300"
+                      className="text-green-700 dark:text-green-300 uppercase"
                     >
                       <CheckCircle2 className="w-3 h-3 mr-1" />
                       Approved
@@ -114,7 +138,7 @@ export const EscrowMilestonesSection = ({
                   {(milestone as MultiReleaseMilestone).flags?.released && (
                     <Badge
                       variant="secondary"
-                      className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"
+                      className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 uppercase"
                     >
                       <CheckCircle2 className="w-3 h-3 mr-1" />
                       Released
@@ -123,7 +147,7 @@ export const EscrowMilestonesSection = ({
                   {(milestone as MultiReleaseMilestone).flags?.resolved && (
                     <Badge
                       variant="secondary"
-                      className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200"
+                      className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 uppercase"
                     >
                       <Handshake className="w-3 h-3 mr-1" />
                       Resolved

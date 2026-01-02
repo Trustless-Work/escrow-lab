@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <GlobalProvider>
-          <Toaster />
+          <Toaster richColors />
           <div className="min-h-screen">
             <div className="flex-1 space-y-4 px-4 h-full">
               <Header />

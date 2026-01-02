@@ -17,7 +17,9 @@ import { useWalletContext } from "@/components/tw-blocks/wallet-kit/WalletProvid
 
 type DistributionInput = { address: string; amount: string | number };
 
-export function useResolveDispute({ onSuccess }: { onSuccess?: () => void } = {}) {
+export function useResolveDispute({
+  onSuccess,
+}: { onSuccess?: () => void } = {}) {
   const { resolveDispute } = useEscrowsMutations();
   const { selectedEscrow, updateEscrow } = useEscrowContext();
   const { walletAddress } = useWalletContext();
@@ -50,7 +52,12 @@ export function useResolveDispute({ onSuccess }: { onSuccess?: () => void } = {}
     const idx = Number(milestoneIndexWatch);
     const milestones = selectedEscrow.milestones as MultiReleaseMilestone[];
     const m = milestones?.[idx];
-    return Number((m?.amount as unknown as number) || 0);
+    const amount = m?.amount;
+    // Handle both string and number types
+    if (amount === undefined || amount === null) return 0;
+    const numAmount =
+      typeof amount === "string" ? Number(amount) : Number(amount);
+    return isNaN(numAmount) ? 0 : numAmount;
   }, [selectedEscrow, milestoneIndexWatch]);
 
   const distributions = form.watch("distributions") as DistributionInput[];
@@ -63,11 +70,22 @@ export function useResolveDispute({ onSuccess }: { onSuccess?: () => void } = {}
   }, [distributions]);
 
   const isExactMatch = React.useMemo(() => {
-    return Number(allowedAmount) === Number(distributedSum);
+    const allowed = Number(allowedAmount);
+    const distributed = Number(distributedSum);
+    // Use epsilon comparison for floating point numbers
+    // Round to 2 decimal places to avoid precision issues
+    const roundedAllowed = Math.round(allowed * 100) / 100;
+    const roundedDistributed = Math.round(distributed * 100) / 100;
+    return Math.abs(roundedAllowed - roundedDistributed) < 0.01;
   }, [allowedAmount, distributedSum]);
 
   const difference = React.useMemo(() => {
-    return Math.abs(Number(allowedAmount) - Number(distributedSum));
+    const allowed = Number(allowedAmount);
+    const distributed = Number(distributedSum);
+    // Round to 2 decimal places to avoid precision issues
+    const roundedAllowed = Math.round(allowed * 100) / 100;
+    const roundedDistributed = Math.round(distributed * 100) / 100;
+    return Math.abs(roundedAllowed - roundedDistributed);
   }, [allowedAmount, distributedSum]);
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);

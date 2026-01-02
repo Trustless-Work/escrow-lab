@@ -16,32 +16,42 @@ import {
   MultiReleaseEscrow,
 } from "@trustless-work/escrow/types";
 import { useTabsContext } from "@/providers/tabs.provider";
+import { BalanceProgressDonut } from "@/components/tw-blocks/escrows/indicators/balance-progress/donut/BalanceProgress";
 
 export const EscrowCreatedSection = () => {
   const { selectedEscrow } = useEscrowContext();
   const { activeEscrowType } = useTabsContext();
 
+  const allMilestones =
+    (selectedEscrow?.milestones as MultiReleaseMilestone[]) || [];
+
+  const getTotalAmount = () => {
+    if (!selectedEscrow) return "0";
+
+    if (activeEscrowType === "single-release") {
+      const amount = selectedEscrow.amount;
+      return amount != null && !isNaN(Number(amount)) ? String(amount) : "0";
+    }
+
+    const total = allMilestones.reduce((sum: number, milestone) => {
+      const amount = milestone?.amount;
+      return (
+        sum + (amount != null && !isNaN(Number(amount)) ? Number(amount) : 0)
+      );
+    }, 0);
+    return isNaN(total) ? "0" : String(total);
+  };
+
   const totalMilestones = selectedEscrow?.milestones.length || 0;
   const completedMilestones =
-    selectedEscrow?.milestones.filter(
-      (m: SingleReleaseMilestone | MultiReleaseMilestone) => {
-        if (activeEscrowType === "single-release") {
-          const singleMilestone = m as SingleReleaseMilestone;
-          return (
-            singleMilestone.status === "approved" ||
-            singleMilestone.status === "completed" ||
-            singleMilestone.approved
-          );
-        } else {
+    activeEscrowType === "multi-release"
+      ? (selectedEscrow?.milestones as MultiReleaseMilestone[]).filter((m) => {
           const multiMilestone = m as MultiReleaseMilestone;
           return (
-            multiMilestone.status === "approved" ||
-            multiMilestone.status === "completed" ||
-            multiMilestone.flags?.approved
+            multiMilestone.flags?.released || multiMilestone.flags?.resolved
           );
-        }
-      }
-    ).length || 0;
+        }).length || 0
+      : 0;
   const progressPercentage =
     totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
 
@@ -53,15 +63,17 @@ export const EscrowCreatedSection = () => {
         </CardHeader>
 
         <CardContent>
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-2 text-sm">
-              <span className="font-medium">Escrow Progress</span>
-              <span className="text-muted-foreground">
-                {completedMilestones} of {totalMilestones} Milestones
-              </span>
+          {activeEscrowType === "multi-release" && (
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2 text-sm">
+                <span className="font-medium">Escrow Progress</span>
+                <span className="text-muted-foreground">
+                  {completedMilestones} of {totalMilestones} Milestones
+                </span>
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
             </div>
-            <Progress value={progressPercentage} className="h-2" />
-          </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-10 gap-10">
             <div className="md:col-span-6">
@@ -69,9 +81,22 @@ export const EscrowCreatedSection = () => {
             </div>
 
             <div className="md:col-span-4">
-              <FinancialDetailsSection selectedEscrow={selectedEscrow} />
+              <FinancialDetailsSection
+                balance={selectedEscrow?.balance || 0}
+                totalAmount={Number(getTotalAmount())}
+                currency={selectedEscrow?.trustline.symbol}
+                platformFee={Number(selectedEscrow?.platformFee || 0)}
+              />
             </div>
           </div>
+
+          <Separator className="my-6" />
+
+          <BalanceProgressDonut
+            balance={selectedEscrow?.balance || 0}
+            target={Number(getTotalAmount())}
+            currency={selectedEscrow?.trustline.symbol}
+          />
 
           <Separator className="my-6" />
 

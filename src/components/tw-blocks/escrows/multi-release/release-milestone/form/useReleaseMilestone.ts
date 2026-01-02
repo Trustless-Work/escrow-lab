@@ -1,10 +1,7 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  releaseMilestoneSchema,
-  type ReleaseMilestoneValues,
-} from "./schema";
+import { releaseMilestoneSchema, type ReleaseMilestoneValues } from "./schema";
 import { toast } from "sonner";
 import {
   MultiReleaseReleaseFundsPayload,
@@ -71,9 +68,11 @@ export function useReleaseMilestone({
       toast.success("Milestone released successfully");
 
       // Ensure amounts are up to date for the success dialog
+      let releasedAmount = 0;
       if (selectedEscrow) {
-        const milestone = selectedEscrow.milestones?.[Number(payload.milestoneIndex)];
-        const releasedAmount = Number(
+        const milestone =
+          selectedEscrow.milestones?.[Number(payload.milestoneIndex)];
+        releasedAmount = Number(
           (milestone as MultiReleaseMilestone | undefined)?.amount || 0
         );
         const platformFee = Number(selectedEscrow.platformFee || 0);
@@ -94,7 +93,7 @@ export function useReleaseMilestone({
           }
           return milestone;
         }),
-        balance: (selectedEscrow?.balance || 0) - (selectedEscrow?.amount || 0),
+        balance: (selectedEscrow?.balance || 0) - releasedAmount,
       });
 
       // Remember which milestone was released for the success dialog
@@ -118,4 +117,3 @@ export function useReleaseMilestone({
     isSubmitting,
   };
 }
-
